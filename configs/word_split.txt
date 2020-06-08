@@ -1,0 +1,33 @@
+main:
+  bucket: &B1 qi-plsa-test 
+  outdir: &OUTDIR !join [s3://, *B1, /output/wordsplit]
+  indir: &INDIR !join [s3://, *B1, /data]
+
+modules:
+  compress:
+    cmd: zip -FSr plsa.zip shared word_split 
+    args:
+      - -x
+      - output snapshots spark-warehouse
+    run: true
+  wordsplit:
+    cmd: spark-submit
+    args:
+      - --master
+      - yarn
+      - --deploy-mode
+      - client
+      - --driver-memory
+      - 100g
+      - --conf
+      - spark.driver.maxResultSize=10g
+      - --conf
+      - spark.executor.memoryOverhead=60g
+      - --conf
+      - spark.kryoserializer.buffer.max=1g
+      - --py-files
+      - plsa.zip
+      - word_split/run_word_split.py
+      - *INDIR
+      - *OUTDIR
+    run: true

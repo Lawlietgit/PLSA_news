@@ -1,20 +1,13 @@
 import os, sys
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 import logging
 import time
 from input_output import read_csv, write_csv
 from utils import get_df_info, get_current_time
 from bs4 import BeautifulSoup
-import codecs
-from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
-from sklearn.decomposition import TruncatedSVD
-from sklearn.pipeline import Pipeline
 import hanlp
 import re
-
-logging.getLogger('matplotlib').setLevel(logging.ERROR)
 
 logger = logging.getLogger(__name__)
 
@@ -27,8 +20,6 @@ f_hdlr = logging.FileHandler('./logs/{}.log'.format(current_time))
 fmt = '%(asctime)s [%(levelname)s]: %(name)s - %(message)s'
 hdlr = [f_hdlr, logging.StreamHandler()]
 logging.basicConfig(level=logging.DEBUG, format=fmt, handlers=hdlr)
-
-np.random.seed(42)
 
 path = './data/FINANCIALNEWS_sample.csv'
 df = read_csv(path)

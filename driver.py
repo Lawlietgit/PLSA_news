@@ -1,30 +1,27 @@
-import os, sys
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
+#!/usr/bin/env python
+
+import argparse
 import logging
-import time
-import pickle as pkl
-from input_output import read_csv, write_csv
-from utils import get_df_info, get_current_time
+import os
+import sys
+import shared.run_utils as phase2
 
-logging.getLogger('matplotlib').setLevel(logging.ERROR)
 
-logger = logging.getLogger(__name__)
+def main(argv):
+    parser = argparse.ArgumentParser(description="PLSA_Financial_News")
+    subparsers = parser.add_subparsers(help="actions")
 
-if not os.path.exists('./logs'):
-    os.mkdir('./logs')
+    batch = subparsers.add_parser("run_batch",
+        help="generate output file based on batch configuration")
+    batch.add_argument("config",
+        help="path to batch configuration file")
+    batch.set_defaults(func=phase2.run_batch)
+    
+    # Actually run it
+    args = parser.parse_args()
+    args.func(args)
 
-current_time = get_current_time()
-f_hdlr = logging.FileHandler('./logs/{}.log'.format(current_time))
-fmt = '%(asctime)s [%(levelname)s]: %(name)s - %(message)s'
-hdlr = [f_hdlr, logging.StreamHandler()]
-logging.basicConfig(level=logging.DEBUG, format=fmt, handlers=hdlr)
+    return 0
 
-np.random.seed(42)
-
-path = './data/FINANCIALNEWS_sample.csv'
-df = read_csv(path)
-
-print(df.head(10))
-get_df_info(df)
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))
